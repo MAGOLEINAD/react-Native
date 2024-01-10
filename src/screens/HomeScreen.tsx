@@ -2,9 +2,7 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {
   ActivityIndicator,
-  Button,
   Dimensions,
-  Text,
   View,
   ScrollView,
 } from 'react-native';

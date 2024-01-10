@@ -1,21 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import { MovieDetailsInterface,CreditosInterface } from '../interfaces';
+import { MovieDetailsInterface,CreditosInterface, Cast } from '../interfaces';
 import moviesApi from '../api/apiMovies';
 
-interface HookDetails {
+
+interface MovieFull{
     loading: boolean
     detalleMovie: MovieDetailsInterface | undefined
-    creditosMovie: CreditosInterface | undefined
+    creditosMovie: Cast[]
 }
 
+const useMoviesDetails = (id: string):MovieFull => {
 
 
-const useMoviesDetails = (id: string):HookDetails => {
-
-  const [loading, setLoading] = useState(true)
-  const [detalleMovie, setDetalleMovie] = useState<MovieDetailsInterface>()
-  const [creditosMovie, setCreditosMovie] = useState<CreditosInterface>()
+  const [detalleMovie, setDetalleMovie] = useState<MovieFull>({
+    loading:true,
+    detalleMovie: undefined,
+    creditosMovie: []
+  })
   
+
 
   const peticionDetalles = async () => {
     try {
@@ -24,10 +27,12 @@ const useMoviesDetails = (id: string):HookDetails => {
 
         const respuesta = await Promise.all ([promiseDetalles,promiseCreditos])
 
-
-        setDetalleMovie(respuesta[0].data)
-        setCreditosMovie(respuesta[1].data)
-        setLoading(false)
+        setDetalleMovie({
+            loading:false,
+            detalleMovie: respuesta[0].data,
+            creditosMovie: respuesta[1].data.cast
+        })
+     
     } catch (error) {
         console.log(error)
     }
@@ -39,9 +44,7 @@ const useMoviesDetails = (id: string):HookDetails => {
   
 
   return  {
-    detalleMovie,
-    creditosMovie,
-    loading
+  ...detalleMovie
   }
 }
 
